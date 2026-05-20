@@ -15,7 +15,36 @@ var tasks []Task
 var nextID = 1
 
 func main () {
+  //test everything 
 
+  fmt.Println ("Testing the app")
+
+  //test addTask 
+
+  addTask ("Learn Go")
+  addTask ("Build project")
+
+  //test listTasks
+
+  listTasks()
+
+  //test removeTask
+
+  err := removeTask (1)
+  if err != nil {
+    fmt.Println ("Error:", err)
+  }
+
+  //test listTasks again to see removal
+
+  listTasks()
+
+  //test error case 
+
+  err = removeTask (99) 
+  if err != nil {
+    fmt.Println ("Expected error:", err)
+  }
 }
 
 func addTask (title string) Task {
@@ -61,7 +90,7 @@ func removeTask (index int) error {
   tasks = append (tasks[:idx], tasks[idx+1:]...)
 
   fmt.Printf ("Removed task: %s\n", removed.Title)
-  return nil
+  return nil //nil is zero type for interfaces (error is an interface type)
 
 
 
