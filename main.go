@@ -1,6 +1,9 @@
 package main 
 
-import "fmt"
+import (
+  "fmt"
+  "errors"
+)
 
 type Task struct {
   ID int
@@ -44,4 +47,22 @@ func listTasks () {
 
     fmt.Printf ("%d [%s] %s (ID: %d)", i+1, status, task.Title, task.ID)
   }
+}
+
+func removeTask (index int) error {
+  idx := index - 1
+
+  if idx < 0 || idx >= len (tasks) {
+    return errors.New ("Index out of range")
+
+  }
+
+  removed := tasks [idx]
+  tasks = append (tasks[:idx], tasks[idx+1:]...)
+
+  fmt.Println ("Removed task: %s\n", removed.Title)
+  return nil
+
+
+
 }
