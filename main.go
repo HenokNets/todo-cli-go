@@ -60,7 +60,7 @@ func removeTask (index int) error {
   removed := tasks [idx]
   tasks = append (tasks[:idx], tasks[idx+1:]...)
 
-  fmt.Println ("Removed task: %s\n", removed.Title)
+  fmt.Printf ("Removed task: %s\n", removed.Title)
   return nil
 
 
