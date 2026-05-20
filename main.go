@@ -74,7 +74,7 @@ func listTasks () {
       status = "✓"
     }
 
-    fmt.Printf ("%d [%s] %s (ID: %d)", i+1, status, task.Title, task.ID)
+    fmt.Printf ("%d [%s] %s (ID: %d)\n", i+1, status, task.Title, task.ID)
   }
 }
 
