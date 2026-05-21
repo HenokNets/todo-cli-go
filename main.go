@@ -25,43 +25,41 @@ func (t Task) String() string {
 var tasks []Task
 var nextID = 1
 
-func main () {
-  //test everything 
+func main() {
+    fmt.Println("Todo App")
 
-  fmt.Println ("Testing the app")
+    //load tasks from file on startup
+    err := loadTasks("tasks.json")
+    if err != nil {
+        fmt.Println("Error loading tasks:", err)
+    }
 
-  //test addTask 
+    //show existing tasks
+    listTasks()
 
-  addTask ("Learn Go")
-  addTask ("Build project")
+    //add new tasks
+    addTask("Learn Go")
+    addTask("Build project")
 
-  //test listTasks
+    //show updated list
+    listTasks()
 
-  listTasks()
+    //remove a task
+    err = removeTask(1)
+    if err != nil {
+        fmt.Println("Error:", err)
+    }
 
-  //test removeTask
+    //show after removal
+    listTasks()
 
-  err := removeTask (1)
-  if err != nil {
-    fmt.Println ("Error:", err)
-  }
+    //save to file before exiting
+    err = saveTasks("tasks.json")
+    if err != nil {
+        fmt.Println("Error saving tasks:", err)
+    }
 
-  //test listTasks again to see removal
-
-  listTasks()
-
-  //test error case 
-
-  err = removeTask (99) 
-  if err != nil {
-    fmt.Println ("Expected error:", err)
-  }
-
-  err = saveTasks ("tasks.json")
-  if err != nil {
-	fmt.Println ("Error saving tasks:", err)
-  }
-
+    fmt.Println("Tasks saved.")
 }
 
 func addTask (title string) Task {
@@ -120,4 +118,27 @@ func saveTasks (filename string) error {
 	return nil
 
 
+}
+
+func loadTasks (filename string) error {
+	data, err := os.ReadFile (filename)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return fmt.Errorf ("failed to read file: %w", err)
+	}
+
+	err = json.Unmarshal (data, &tasks)
+	if err != nil {
+		return fmt.Errorf ("failed to unmarshal tasks: %w", err)
+	}
+
+	for _, task := range tasks {
+		if task.ID >= nextID {
+			nextID = task.ID + 1
+		}
+	}
+
+	return nil
 }
