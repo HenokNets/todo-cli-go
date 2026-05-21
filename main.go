@@ -3,12 +3,13 @@ package main
 import (
   "fmt"
   "errors"
+  "encoding/json"
 )
 
 type Task struct {
-  ID int
-  Title string
-  Done bool
+  ID int `json:"id"`
+  Title string `json:"title"`
+  Done bool	`json:"done"`
 }
 
 func (t Task) String() string {
@@ -54,6 +55,29 @@ func main () {
   if err != nil {
     fmt.Println ("Expected error:", err)
   }
+
+  data, err := json.Marshal (tasks)
+  if err != nil {
+	fmt.Println (err)
+  }
+  
+  fmt.Println (data)
+
+
+
+  jsonData := []byte(`
+	[{
+  		"id": 122,
+		"title": "study go",
+		"done": true
+	}]
+`)
+var loadedTasks []Task
+  err = json.Unmarshal (jsonData, &loadedTasks)
+  if err != nil {
+	fmt.Println("Unmarshal error:", err)
+  }
+ fmt.Println ("Unmarshaled:", loadedTasks)
 }
 
 func addTask (title string) Task {
@@ -98,3 +122,4 @@ func removeTask (index int) error {
 
 
 }
+
