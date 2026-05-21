@@ -11,6 +11,15 @@ type Task struct {
   Done bool
 }
 
+func (t Task) String() string {
+	status := " "
+	if t.Done {
+		status = "✓"
+	}
+
+	return fmt.Sprintf ("[%s] %d. %s", status, t.ID, t.Title)
+}
+
 var tasks []Task
 var nextID = 1
 
@@ -56,7 +65,7 @@ func addTask (title string) Task {
 
   tasks = append (tasks, task)
   nextID++
-  fmt.Printf ("Added task: %s (ID: %d)\n", title, task.ID)
+  fmt.Printf ("Added: %s\n", task)
   return task
 }
 
@@ -67,14 +76,8 @@ func listTasks () {
     return
   }
   fmt.Println ("\nYour tasks:")
-  for i, task := range tasks {
-    status := ""
-
-    if task.Done {
-      status = "✓"
-    }
-
-    fmt.Printf ("%d [%s] %s (ID: %d)\n", i+1, status, task.Title, task.ID)
+  for _, task := range tasks {
+    fmt.Println(task)
   }
 }
 
@@ -89,7 +92,7 @@ func removeTask (index int) error {
   removed := tasks [idx]
   tasks = append (tasks[:idx], tasks[idx+1:]...)
 
-  fmt.Printf ("Removed task: %s\n", removed.Title)
+  fmt.Printf ("Removed: %s\n", removed)
   return nil //nil is zero type for interfaces (error is an interface type)
 
 
