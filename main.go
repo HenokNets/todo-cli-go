@@ -4,6 +4,7 @@ import (
   "fmt"
   "errors"
   "encoding/json"
+  "os"
 )
 
 type Task struct {
@@ -56,28 +57,11 @@ func main () {
     fmt.Println ("Expected error:", err)
   }
 
-  data, err := json.Marshal (tasks)
+  err = saveTasks ("tasks.json")
   if err != nil {
-	fmt.Println (err)
+	fmt.Println ("Error saving tasks:", err)
   }
-  
-  fmt.Println (data)
 
-
-
-  jsonData := []byte(`
-	[{
-  		"id": 122,
-		"title": "study go",
-		"done": true
-	}]
-`)
-var loadedTasks []Task
-  err = json.Unmarshal (jsonData, &loadedTasks)
-  if err != nil {
-	fmt.Println("Unmarshal error:", err)
-  }
- fmt.Println ("Unmarshaled:", loadedTasks)
 }
 
 func addTask (title string) Task {
@@ -123,3 +107,17 @@ func removeTask (index int) error {
 
 }
 
+func saveTasks (filename string) error {
+	data, err := json.MarshalIndent (tasks, "", "  ")
+  	if err != nil {
+		return err
+  	}
+
+	err = os.WriteFile (filename, data, 0644)
+	if err != nil {
+		return err
+	}
+	return nil
+
+
+}
