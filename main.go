@@ -32,7 +32,11 @@ func main() {
     err := loadTasks("tasks.json")
     if err != nil {
         fmt.Println("Error loading tasks:", err)
-    }
+    } else if len (tasks) == 0 {
+		fmt.Println ("Created new todo list")
+	} else {
+		fmt.Printf ("Successfully loaded %d tasks\n", len(tasks))
+	}
 
     //show existing tasks
     listTasks()
@@ -57,9 +61,11 @@ func main() {
     err = saveTasks("tasks.json")
     if err != nil {
         fmt.Println("Error saving tasks:", err)
-    }
+    } else {
+		fmt.Printf ("saved %d tasks", len(tasks))
+	}
 
-    fmt.Println("Tasks saved.")
+    
 }
 
 func addTask (title string) Task {
