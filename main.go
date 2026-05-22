@@ -121,17 +121,17 @@ func saveTasks (filename string) error {
 }
 
 func loadTasks (filename string) error {
-	file, err := os.Open ("tasks.txt")
+	file, err := os.Open (filename)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return nil
 		}
 		return fmt.Errorf ("failed to read file: %w", err)
 	}
-
-	err = json.Unmarshal (data, &tasks)
+	defer file.Close()
+	err = json.NewDecoder(file).Decode(&tasks)
 	if err != nil {
-		return fmt.Errorf ("failed to unmarshal tasks: %w", err)
+		return fmt.Errorf ("failed to decode tasks: %w", err)
 	}
 
 	for _, task := range tasks {
