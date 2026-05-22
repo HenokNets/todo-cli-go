@@ -108,12 +108,12 @@ func removeTask (index int) error {
 func saveTasks (filename string) error {
 	data, err := json.MarshalIndent (tasks, "", "  ")
   	if err != nil {
-		return err
+		return fmt.Errorf ("couldn't marshal tasks: %w", err)
   	}
 
 	err = os.WriteFile (filename, data, 0644)
 	if err != nil {
-		return err
+		return fmt.Errorf ("couldn't write data: %w", err)
 	}
 	return nil
 
@@ -121,7 +121,7 @@ func saveTasks (filename string) error {
 }
 
 func loadTasks (filename string) error {
-	data, err := os.ReadFile (filename)
+	file, err := os.Open ("tasks.txt")
 	if err != nil {
 		if os.IsNotExist(err) {
 			return nil
