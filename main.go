@@ -128,9 +128,14 @@ func listTasks() {
 		fmt.Println("No tasks available")
 		return
 	}
-	fmt.Println("\nYour tasks:")
+	fmt.Println("\nID  | Status | Title")
+	fmt.Println("----------------------")
 	for _, task := range tasks {
-		fmt.Println(task)
+		status := "✗"
+		if task.Done {
+			status = "✓"
+		}
+		fmt.Printf("%-3d | %-6s | %s\n", task.ID, status, task.Title)
 	}
 }
 
