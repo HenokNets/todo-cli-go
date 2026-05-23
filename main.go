@@ -39,7 +39,18 @@ func main() {
 
 	switch os.Args[1] {
 	case "add":
-		fmt.Println("add command not implemented yet")
+		if len(os.Args) < 3 {
+			fmt.Println("Error: no title provided")
+			return
+		}
+		title := strings.Join(os.Args[2:], " ")
+		addTask(title)
+		err = saveTasks("tasks.json")
+		if err != nil {
+			fmt.Println("Error saving tasks:", err)
+			return
+		}
+		fmt.Printf("Saved %d tasks\n", len(tasks))
 	case "list":
 		listTasks()
 	case "remove":
