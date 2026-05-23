@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
+	"strconv"
 )
 
 type Task struct {
@@ -54,9 +56,47 @@ func main() {
 	case "list":
 		listTasks()
 	case "remove":
-		fmt.Println("remove command not implemented yet")
+		if len(os.Args) < 3 {
+			fmt.Println("Error: no ID provided")
+			return
+		}
+		id, err := strconv.Atoi(os.Args[2])
+		if err != nil {
+			fmt.Println("Error: invalid ID")
+			return
+		}
+		err = removeTask(id)
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+		err = saveTasks("tasks.json")
+		if err != nil {
+			fmt.Println("Error saving tasks:", err)
+			return
+		}
+		fmt.Printf("Saved %d tasks\n", len(tasks))
 	case "done":
-		fmt.Println("done command not implemented yet")
+		if len(os.Args) < 3 {
+			fmt.Println("Error: no ID provided")
+			return
+		}
+		id, err := strconv.Atoi(os.Args[2])
+		if err != nil {
+			fmt.Println("Error: invalid ID")
+			return
+		}
+		err = doneTask(id)
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+		err = saveTasks("tasks.json")
+		if err != nil {
+			fmt.Println("Error saving tasks:", err)
+			return
+		}
+		fmt.Printf("Saved %d tasks\n", len(tasks))
 	default:
 		printUsage()
 	}
@@ -105,6 +145,18 @@ func removeTask(index int) error {
 	tasks = append(tasks[:idx], tasks[idx+1:]...)
 
 	fmt.Printf("Removed: %s\n", removed)
+	return nil
+}
+
+func doneTask(index int) error {
+	idx := index - 1
+
+	if idx < 0 || idx >= len(tasks) {
+		return errors.New("index out of range")
+	}
+
+	tasks[idx].Done = true
+	fmt.Printf("Marked done: %s\n", tasks[idx])
 	return nil
 }
 
