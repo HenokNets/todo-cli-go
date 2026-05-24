@@ -22,64 +22,47 @@ func main() {
 		return
 	}
 
-	switch os.Args[1] {
+	runCommand(os.Args[1], os.Args[2:])
+}
+
+func runCommand(cmd string, args []string) {
+	switch cmd {
 	case "add":
-		if len(os.Args) < 3 {
+		if len(args) < 1 {
 			fmt.Println("Error: no title provided")
 			return
 		}
-		title := strings.Join(os.Args[2:], " ")
+		title := strings.Join(args, " ")
 		addTask(title)
-		err = saveTasks("tasks.json")
-		if err != nil {
-			fmt.Println("Error saving tasks:", err)
-			return
-		}
-		fmt.Printf("Saved %d tasks\n", len(tasks))
+		saveIfModified()
+
 	case "list":
 		listTasks()
+
 	case "remove":
-		if len(os.Args) < 3 {
-			fmt.Println("Error: no ID provided")
+		id, ok := parseID(args)
+		if !ok {
 			return
 		}
-		id, err := strconv.Atoi(os.Args[2])
-		if err != nil {
-			fmt.Println("Error: invalid ID")
-			return
-		}
-		err = removeTask(id)
+		err := removeTask(id)
 		if err != nil {
 			fmt.Println("Error:", err)
 			return
 		}
-		err = saveTasks("tasks.json")
-		if err != nil {
-			fmt.Println("Error saving tasks:", err)
-			return
-		}
-		fmt.Printf("Saved %d tasks\n", len(tasks))
+		saveIfModified()
+
 	case "done":
-		if len(os.Args) < 3 {
-			fmt.Println("Error: no ID provided")
+		id, ok := parseID(args)
+		if !ok {
 			return
 		}
-		id, err := strconv.Atoi(os.Args[2])
-		if err != nil {
-			fmt.Println("Error: invalid ID")
-			return
-		}
-		err = doneTask(id)
+		err := doneTask(id)
 		if err != nil {
 			fmt.Println("Error:", err)
 			return
 		}
-		err = saveTasks("tasks.json")
-		if err != nil {
-			fmt.Println("Error saving tasks:", err)
-			return
-		}
-		fmt.Printf("Saved %d tasks\n", len(tasks))
+		saveIfModified()
+
 	case "clear":
 		count := clearDoneTasks()
 		if count == 0 {
@@ -87,21 +70,40 @@ func main() {
 		} else {
 			fmt.Printf("Removed %d completed task(s)\n", count)
 		}
-		err = saveTasks("tasks.json")
-		if err != nil {
-			fmt.Println("Error saving tasks:", err)
-			return
-		}
-		fmt.Printf("Saved %d tasks\n", len(tasks))
+		saveIfModified()
+
 	case "filter":
-		if len(os.Args) < 3 {
+		if len(args) < 1 {
 			fmt.Println("Error: specify 'done' or 'undone'")
 			return
 		}
-		filterTasks(os.Args[2])
+		filterTasks(args[0])
+
 	default:
 		printUsage()
 	}
+}
+
+func parseID(args []string) (int, bool) {
+	if len(args) < 1 {
+		fmt.Println("Error: no ID provided")
+		return 0, false
+	}
+	id, err := strconv.Atoi(args[0])
+	if err != nil {
+		fmt.Println("Error: invalid ID")
+		return 0, false
+	}
+	return id, true
+}
+
+func saveIfModified() {
+	err := saveTasks("tasks.json")
+	if err != nil {
+		fmt.Println("Error saving tasks:", err)
+		return
+	}
+	fmt.Printf("Saved %d tasks\n", len(tasks))
 }
 
 func printUsage() {
