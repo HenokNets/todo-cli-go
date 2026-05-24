@@ -70,7 +70,64 @@ func doneTask(index int) error {
 		return errors.New("index out of range")
 	}
 
+	if tasks[idx].Done {
+		return errors.New("task already done")
+	}
+
 	tasks[idx].Done = true
 	fmt.Printf("Marked done: %s\n", tasks[idx])
 	return nil
+}
+
+func clearDoneTasks() int {
+	var remaining []Task
+	removed := 0
+
+	for _, task := range tasks {
+		if task.Done {
+			removed++
+		} else {
+			remaining = append(remaining, task)
+		}
+	}
+
+	tasks = remaining
+	return removed
+}
+
+func filterTasks(filter string) {
+	if filter != "done" && filter != "undone" {
+		fmt.Println("Error: filter must be 'done' or 'undone'")
+		return
+	}
+
+	found := false
+	for _, task := range tasks {
+		if filter == "done" && task.Done {
+			found = true
+		} else if filter == "undone" && !task.Done {
+			found = true
+		} else {
+			continue
+		}
+
+		if found {
+			status := "✗"
+			if task.Done {
+				status = "✓"
+			}
+			if found {
+				fmt.Printf("%-3d | %-6s | %s\n", task.ID, status, task.Title)
+				found = true
+			}
+		}
+	}
+
+	if !found {
+		if filter == "done" {
+			fmt.Println("No completed tasks")
+		} else {
+			fmt.Println("No active tasks")
+		}
+	}
 }
